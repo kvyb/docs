@@ -4,30 +4,51 @@ description: 'Example section for showcasing API endpoints'
 ---
 
 <Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
+  This API is designed to facilitate a seamless interaction between your users and the verbal conversational AI session system. It enables the creation of agent sessions for your users, fetching unanswered questions, processing user voice chunks, generating API keys for authenticated users, and much more.
 </Note>
 
-## Welcome
+# Usage Examples
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
-
+Below is a logical sequence of routes you can use to build an implementation.
 <Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
+  title="1. Add Agent Session"
+  icon="code"
+  href="/api-reference/endpoint/add-agent-session"
 >
-  View the OpenAPI specification file
+<br />Create Agent Sessions for your users. These sessions are permanent and can be referenced by your app programmatically, depending on your implementation logic.<br /><br />Make a POST request to /add_agent_session with your API key and a list of parameters.
 </Card>
 
-## Authentication
-
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
-
+Example: 
 ```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+{
+  "questions": [
+    {
+      "text": "Do you have experience in programming?",
+      "dependent_questions": ["Which programming languages do you know?",...]
+    },
+    {
+      "text": "What was your first programming project?",
+    },
+    ...
+  ]
+}
 ```
+
+<Card
+  title="2. Get Next Question"
+  icon="code"
+  href="/api-reference/endpoint/get-question"
+>
+To get the next unanswered question in a session, make a GET request to /get_question/{entity_id}, replacing {entity_id} with the ID of session created at previous step.<br /><br />
+This is useful, because it allows you to get the next unanswered question and all corresponding data at any point, and progress the conversation automatically.<br /><br />
+Note: if /process-chunk returns "message": "Response was satisfactory.", the question will be flagged as answered and the next question will be returned by /get_question.
+</Card>
+
+<Card
+  title="3. Process Audio Chunk"
+  icon="code"
+  href="/api-reference/endpoint/process-audio-chunk"
+>
+To process a chunk of the user's voice response, make a POST request to /process_chunk/{entity_id}. Attach the audio blob as file in the request body.<br /><br />The API will analyze the voice chunk and return relevant data, possibly including a clarification question.<br /><br />
+Note the 'final_chunk' parameter.
+</Card>

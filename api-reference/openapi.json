@@ -1,94 +1,226 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "title": "Your API Title",
+    "description": "Description of your API"
   },
-  "servers": [
-    {
-      "url": "http://sandbox.mintlify.com"
-    }
-  ],
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ],
   "paths": {
-    "/plants": {
-      "get": {
-        "description": "Returns all plants from the system that the user has access to",
+    "/add_agent_session": {
+      "post": {
+        "summary": "Add agent session",
+        "description": "This route creates a new agent session by accepting a list of questions. Each question can have dependent questions. Dependent questions are only asked if parent question received a positive answer. The session is associated with a customer identified by the API key in the request header. If successful, it returns the entity ID and a URL that can be used by end-user to access the session.",
+        "operationId": "addQuestions",
         "parameters": [
           {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
+            "name": "x-api-key",
+            "in": "header",
+            "required": true,
+            "description": "API key to authorize customer request",
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string"
             }
           }
         ],
+        "requestBody": {
+          "description": "A JSON object.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "questions": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "text": {
+                          "type": "string",
+                          "description": "Main question text."
+                        },
+                        "dependent_questions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "description": "Dependent questions related to the main question."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Session added successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
+                  "type": "object",
+                  "properties": {
+                    "entity_id": {
+                      "type": "string",
+                      "description": "The ID of the created session entity."
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "The URL to access the created session."
+                    }
                   }
                 }
               }
             }
           },
-          "400": {
-            "description": "Unexpected error",
+          "401": {
+            "description": "Unauthorized - Invalid API key."
+          }
+        }
+      }
+    },
+    "/get_question/{entity_id}": {
+      "get": {
+        "summary": "Get question",
+        "description": "Retrieve the next unanswered question in session and its data.",
+        "operationId": "getQuestion",
+        "parameters": [
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": true,
+            "description": "API key to authorize requests",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entity_id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the entity",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Question retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "question_text": {
+                      "type": "string"
+                    },
+                    "question_mp3_url": {
+                      "type": "string"
+                    },
+                    "main_question_id": {
+                      "type": "integer"
+                    },
+                    "dependent_question_id": {
+                      "type": "integer"
+                    },
+                    "total_questions": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/process_chunk/{entity_id}": {
+      "post": {
+        "summary": "Process user voice chunk",
+        "description": "Process an audio chunk for a specific entity. Expects a .blob. Ideally with chunk duration <2s. Larger chunks increase agent response latency.",
+        "operationId": "processChunk",
+        "parameters": [
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": true,
+            "description": "API key to authorize requests",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entity_id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the entity",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "main_question_id": {
+                    "type": "integer"
+                  },
+                  "dependent_question_id": {
+                    "type": "integer"
+                  },
+                  "final_chunk": {
+                    "type": "boolean"
+                  }
                 }
               }
             }
           }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
         },
         "responses": {
           "200": {
-            "description": "plant response",
+            "description": "Audio chunk processed successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "Response was satisfactory.": {
+                          "type": "string",
+                          "example": "Response was satisfactory."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "clarification_question": {
+                          "type": "string",
+                          "example": "clarification question text"
+                        },
+                        "clarification_question_mp3_url": {
+                          "type": "string",
+                          "format": "uri",
+                          "example": "url_for('stream_audio', entity_id=entity_id, idx_pair=idx_pair)"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -96,99 +228,102 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/audio_stream/{entity_id}/{idx_pair}": {
+      "get": {
+        "summary": "Stream agent response",
+        "description": "Stream agent response audio for a specific entity and question pair.",
+        "operationId": "streamAudio",
         "parameters": [
           {
-            "name": "id",
+            "name": "entity_id",
             "in": "path",
-            "description": "ID of plant to delete",
             "required": true,
+            "description": "ID of the entity",
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
+            }
+          },
+          {
+            "name": "idx_pair",
+            "in": "path",
+            "required": true,
+            "description": "Index pair of the questions",
+            "schema": {
+              "type": "string"
             }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
+          "200": {
+            "description": "Audio stream successful",
             "content": {
-              "application/json": {
+              "audio/mpeg": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "string",
+                  "format": "binary"
                 }
               }
             }
           }
         }
       }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
+    },
+    "/": {
+      "get": {
+        "summary": "Root endpoint",
+        "description": "Serve the main application page.",
+        "operationId": "root",
+        "responses": {
+          "200": {
+            "description": "Main page served successfully"
           }
         }
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+    "/generate_api_key": {
+      "post": {
+        "summary": "Generate API key",
+        "description": "Generate a new API key for a customer based on their credentials.",
+        "operationId": "generateApiKey",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "API key generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "api_key": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
       }
     }
   }
