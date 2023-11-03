@@ -325,6 +325,123 @@
           }
         }
       }
+    },
+    "/get_session_data": {
+      "get": {
+        "summary": "Get session data",
+        "description": "Retrieve an array including all session data: questions and conversations related to your customer number identified by API key in the request header.",
+        "operationId": "getSessionData",
+        "parameters": [
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": true,
+            "description": "API key to authorize the request",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of session data objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string",
+                        "description": "Unique identifier for the session data."
+                      },
+                      "conversations": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "question_dep_index": {
+                              "type": "integer",
+                              "nullable": true,
+                              "description": "Index of the dependent question if any."
+                            },
+                            "question_index": {
+                              "type": "integer",
+                              "description": "Index of the question in the session."
+                            },
+                            "server_text_response": {
+                              "type": "string",
+                              "description": "Text response from the server."
+                            },
+                            "user_audio_response_url": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "format": "uri",
+                                "description": "URLs to the user's audio response."
+                              }
+                            },
+                            "user_text_response": {
+                              "type": "string",
+                              "description": "User's text response."
+                            }
+                          }
+                        }
+                      },
+                      "customer_id": {
+                        "type": "string",
+                        "description": "Identifier for the customer associated with this session."
+                      },
+                      "questions": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "answered": {
+                              "type": "boolean",
+                              "description": "Indicator if the question has been answered."
+                            },
+                            "clarification_question": {
+                              "type": "string",
+                              "description": "Follow-up question asked for clarification if any."
+                            },
+                            "dependent_questions": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "description": "List of dependent questions."
+                              }
+                            },
+                            "id": {
+                              "type": "integer",
+                              "description": "Unique identifier for the question."
+                            },
+                            "response_classified_as": {
+                              "type": "string",
+                              "description": "Classification of the response if available."
+                            },
+                            "text": {
+                              "type": "string",
+                              "description": "Text of the question."
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API key missing or invalid."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
     }
   }
 }
