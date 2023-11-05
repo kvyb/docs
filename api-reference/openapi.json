@@ -283,7 +283,7 @@
     "/generate_api_key": {
       "post": {
         "summary": "Generate API key",
-        "description": "Generate a new API key for a customer based on their credentials.",
+        "description": "Generate a new global API key for your account based on credentials.",
         "operationId": "generateApiKey",
         "requestBody": {
           "required": true,
