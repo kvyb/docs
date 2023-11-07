@@ -1,10 +1,10 @@
 ---
-title: 'Introduction'
-description: 'Example section showing example use of API endpoints'
+title: 'Example usage'
+description: 'This API is designed to facilitate a seamless interaction between your users and the verbal conversational AI session system. It enables the creation of agent sessions for your users, fetching unanswered questions, processing user voice chunks, generating API keys for authenticated users, and much more.'
 ---
 
 <Note>
-  This API is designed to facilitate a seamless interaction between your users and the verbal conversational AI session system. It enables the creation of agent sessions for your users, fetching unanswered questions, processing user voice chunks, generating API keys for authenticated users, and much more.
+  Below is an ordered sequence of routes you can use to build an implementation.
 </Note>
 
 {/* <img
@@ -14,9 +14,6 @@ description: 'Example section showing example use of API endpoints'
   alt="Hero Image"
 /> */}
 
-# Usage Examples
-
-Below is a logical sequence of routes you can use to build an implementation.
 <Card
   title="1. Add Agent Session"
   icon="code"
@@ -59,3 +56,7 @@ Note: if /process-chunk returns "message": "Response was satisfactory.", the que
 To process a chunk of the user's voice response, make a POST request to /process_chunk/{entity_id}. Attach the audio blob as file in the request body.<br /><br />The API will analyze the voice chunk and return relevant data, possibly including a clarification question.<br /><br />
 Note the 'final_chunk' parameter.
 </Card>
+
+<Note>
+  After submitting 'final_chunk,' you'll get a voice file for clarification or a 'Response was satisfactory' message. If it's satisfactory, use '/get-question' and repeat the process above for each question in the session.
+</Note>

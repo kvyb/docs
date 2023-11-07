@@ -9,7 +9,7 @@
     "/add_agent_session": {
       "post": {
         "summary": "Add agent session",
-        "description": "This route creates a new agent session by accepting a list of questions. Each question can have dependent questions. Dependent questions are only asked if parent question received a positive answer. The session is associated with a customer identified by the API key in the request header. If successful, it returns the entity ID and a URL that can be used by end-user to access the session.",
+        "description": "This route creates a new agent session by accepting a list of questions. Each question can have dependent questions. Dependent questions are only asked if parent question received a positive answer. The session is associated with a customer identified by the API key in the request header. If successful, it returns the entity ID and a URL that can be used by end-user to access the session through our UI.",
         "operationId": "addQuestions",
         "parameters": [
           {
@@ -283,7 +283,7 @@
     "/generate_api_key": {
       "post": {
         "summary": "Generate API key",
-        "description": "Generate a new global API key for your account based on credentials.",
+        "description": "Keep your API key confidential! It should never be revealed in client-side code in browsers or apps, nor shared publicly. Ensure that all production requests pass through your backend server, where your API key is safely loaded from an environment variable or a key management system.",
         "operationId": "generateApiKey",
         "requestBody": {
           "required": true,
@@ -329,7 +329,7 @@
     "/get_session_data": {
       "get": {
         "summary": "Get session data",
-        "description": "Retrieve an array including all session data: questions and conversations related to your customer number identified by API key in the request header.",
+        "description": "Retrieve an array including all session data for your account: questions and conversations related to your customer number identified by API key in the request header.",
         "operationId": "getSessionData",
         "parameters": [
           {
