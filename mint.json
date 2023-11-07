@@ -1,9 +1,6 @@
 {
   "api": {
-    "baseUrl": "https://st2m.uitrial.com",
-    "auth": {
-      "method": "bearer"
-    }
+    "baseUrl": "https://st2m.uitrial.com"
   },
   "$schema": "https://mintlify.com/schema.json",
   "name": "Uitrial Verbal Conversational API",
