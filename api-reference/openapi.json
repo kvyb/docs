@@ -48,6 +48,10 @@
                         }
                       }
                     }
+                  },
+                  "persona": {
+                    "type": "string",
+                    "description": "persona ID created with /create_persona"
                   }
                 }
               }
@@ -439,6 +443,119 @@
           },
           "500": {
             "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/create_persona": {
+      "post": {
+        "summary": "Add agent persona",
+        "description": "This route allows for the creation of a custom AI persona based on various parameters.",
+        "operationId": "createPersona",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "API key for authentication."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "strictness": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "The strictness level (0.0-1.0) for information relevancy.",
+                    "minimum": 0.0,
+                    "maximum": 1.0
+                  },
+                  "maxFollowUpQuestions": {
+                    "type": "integer",
+                    "description": "Maximum number of follow-up questions allowed."
+                  },
+                  "language": {
+                    "type": "string",
+                    "description": "Language code for the AI's communication language. ISO 639-1 format.",
+                    "pattern": "^[a-z]{2}$"
+                  },
+                  "voice": {
+                    "type": "string",
+                    "enum": ["female", "male"],
+                    "description": "The voice gender of the AI."
+                  },
+                  "tone": {
+                    "type": "string",
+                    "enum": ["formal", "informal"],
+                    "description": "The tone of the AI's responses."
+                  },
+                  "sessionType": {
+                    "type": "string",
+                    "enum": ["interview", "casual", "transactional"],
+                    "description": "The type of conversational session."
+                  },
+                  "retrieval": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Array of links to documents for information retrieval."
+                  },
+                  "informationSourceBackbone": {
+                    "type": "string",
+                    "enum": ["retrieval only", "mixed", "ai context only"],
+                    "description": "Backbone of the information source for the AI."
+                  }
+                },
+                "example": {
+                  "strictness": 0.8,
+                  "maxFollowUpQuestions": 3,
+                  "language": "en",
+                  "voice": "female",
+                  "tone": "informal",
+                  "sessionType": "casual",
+                  "retrieval": [
+                    "http://example.com/document1.pdf",
+                    "http://example.com/document2.html"
+                  ],
+                  "informationSourceBackbone": "mixed"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a new AI persona.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "personaId": {
+                      "type": "string",
+                      "description": "Unique identifier of the created AI persona."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, parameters missing or invalid."
+          },
+          "401": {
+            "description": "Unauthorized, invalid API key."
+          },
+          "500": {
+            "description": "Internal Server Error."
           }
         }
       }

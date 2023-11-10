@@ -47,6 +47,7 @@
       "group": "Endpoints",
       "pages": [
         "api-reference/endpoint/generate-api-key-for-a-user",
+        "api-reference/endpoint/create-persona",
         "api-reference/endpoint/add-agent-session",
         "api-reference/endpoint/process-audio-chunk",
         "api-reference/endpoint/get-question",
