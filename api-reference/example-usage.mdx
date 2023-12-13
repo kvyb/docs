@@ -43,7 +43,7 @@ Example:
   icon="code"
   href="/api-reference/endpoint/get-question"
 >
-To get the next unanswered question in a session, make a GET request to /get_question/{entity_id}, replacing {entity_id} with the ID of session created at previous step.<br /><br />
+To get the next unanswered question in a session, make a GET request to /get_question/\{entity_id\}, replacing \{entity_id\} with the ID of session created at previous step.<br /><br />
 This is useful, because it allows you to get the next unanswered question and all corresponding data at any point, and progress the conversation automatically.<br /><br />
 Note: if /process-chunk returns "message": "Response was satisfactory.", the question will be flagged as answered and the next question will be returned by /get_question.
 </Card>
@@ -53,7 +53,7 @@ Note: if /process-chunk returns "message": "Response was satisfactory.", the que
   icon="code"
   href="/api-reference/endpoint/process-audio-chunk"
 >
-To process a chunk of the user's voice response, make a POST request to /process_chunk/{entity_id}. Attach the audio blob as file in the request body.<br /><br />The API will analyze the voice chunk and return relevant data, possibly including a clarification question.<br /><br />
+To process a chunk of the user's voice response, make a POST request to /process_chunk/\{entity_id\}. Attach the audio blob as file in the request body.<br /><br />The API will analyze the voice chunk and return relevant data, possibly including a clarification question.<br /><br />
 Note the 'final_chunk' parameter.
 </Card>
 
